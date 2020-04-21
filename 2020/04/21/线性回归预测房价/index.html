@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="线性回归,梯度下降法,最小二乘法,R^2指标," />
+  <meta name="keywords" content="线性回归,梯度下降法,最小二乘法," />
 
 
 
@@ -88,12 +88,11 @@
 <meta property="og:image" content="http://csliangl.github.io/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/factor.jpg">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/RM.jpg">
 <meta property="article:published_time" content="2020-04-20T16:14:10.000Z">
-<meta property="article:modified_time" content="2020-04-21T14:05:36.884Z">
+<meta property="article:modified_time" content="2020-04-21T14:26:12.373Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="线性回归">
 <meta property="article:tag" content="梯度下降法">
 <meta property="article:tag" content="最小二乘法">
-<meta property="article:tag" content="R^2指标">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://csliangl.github.io/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/factor.jpg">
 
@@ -369,13 +368,13 @@
 <blockquote>
 <p>均方根误差RMSE:6.60<br>平均绝对误差MAE:4.45<br>确定性系数R^2的值:0.48<br>线性回归w的值:[9.10210898]<br>线性回归b的值:-34.670620776438554</p>
 </blockquote>
-<p>&emsp;&emsp;接下来我们就可以根据模型来预测房价了，比如预测拥有5个房间的房子的房价，不到11万美元；而拥有8个房间的房子的房价，大概为38万美元。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lr.predict([[5], [8]]) #输出为array([10.83992413, 38.14625107])</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;接下来我们就可以根据模型来预测房价了，比如预测拥有5个房间的房子的房价，不到11万美元；而拥有8个房间的房子的房价，大概为38万美元。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lr.predict([[5], [8]])	# 输出为array([10.83992413, 38.14625107])</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;为了更好地展示训练效果，画出预测曲线：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">plt.rcParams[<span class="string">'font.sans-serif'</span>] = [<span class="string">'SimHei'</span>] <span class="comment">#让matplotlib能够显示中文字体</span></span><br><span class="line">plt.rcParams[<span class="string">'axes.unicode_minus'</span>] = <span class="literal">False</span></span><br><span class="line"><span class="comment"># 可视化预测曲线</span></span><br><span class="line">plt.scatter(rm_X, rm_y, color=<span class="string">'blue'</span>)</span><br><span class="line">plt.plot(rm_X, lr.predict(rm_X), color=<span class="string">'green'</span>, linewidth=<span class="number">5</span>)</span><br><span class="line">plt.xlabel(<span class="string">"$RM$(住宅平均房间数)"</span>)</span><br><span class="line">plt.ylabel(<span class="string">"$price$"</span>)</span><br><span class="line">plt.title(<span class="string">"$ralationship\ between\ RM\ and\ price$"</span>)</span><br><span class="line">plt.savefig(<span class="string">"RM.jpg"</span>, dpi=<span class="number">800</span>)</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;输出为：<img src="/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/RM.jpg" alt="RM"></p>
 <p>&emsp;&emsp;以上建立的模型是一元线性回归，即输入是一维的，只有RM数据。我们可以加上LSTAT数据，建立二元线性回归模型。只需要重新生成输入数据rm_X，其余代码不用修改:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 二元线性回归</span></span><br><span class="line">rm_X = df_ds[[<span class="string">'RM'</span>, <span class="string">'LSTAT'</span>]].values</span><br><span class="line">rm_y = df_ds[<span class="string">'price'</span>]</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;模型的输出结果为：</p>
 <blockquote>
 <p>均方根误差RMSE:5.52<br>平均绝对误差MAE:3.95<br>确定性系数R^2的值:0.64<br>线性回归w的值:[ 5.09478798 -0.64235833]<br>线性回归b的值:-1.3582728118744818</p>
 </blockquote>
-<p>&emsp;&emsp;我们同样预测拥有5个房间和8个房间的房子的房价，并假设低收入人群比例为10%，房价分别为17.7万美元和33万美元<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lr.predict([[5, 10], [8, 10]])  #输出为array([17.69208377, 32.97644772])</span><br></pre></td></tr></table></figure><br>&emsp;emsp;从一元线性回归到二元线性回归，RMSE由6.60降到5.52，MAE由4.45降到3.95，$R^2$由0.48提升到0.64。就这个例子而言，二元线性回归明显好于一元线性回归。当然也可以考虑进更多的因素，不再多说。</p>
+<p>&emsp;&emsp;我们同样预测拥有5个房间和8个房间的房子的房价，并假设低收入人群比例为10%，房价分别为17.7万美元和33万美元<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lr.predict([[5, 10], [8, 10]])	# 输出为array([17.69208377, 32.97644772])</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;从一元线性回归到二元线性回归，RMSE由6.60降到5.52，MAE由4.45降到3.95，$R^2$由0.48提升到0.64。就这个例子而言，二元线性回归明显好于一元线性回归。当然也可以考虑进更多的特征，不再多说。</p>
 
       
     </div>
@@ -398,8 +397,6 @@
             <a href="/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/" rel="tag"># 梯度下降法</a>
           
             <a href="/tags/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95/" rel="tag"># 最小二乘法</a>
-          
-            <a href="/tags/R-2%E6%8C%87%E6%A0%87/" rel="tag"># R^2指标</a>
           
         </div>
       
@@ -523,7 +520,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
