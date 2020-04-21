@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="线性回归,梯度下降法,最小二乘法,$R^2$指标," />
+  <meta name="keywords" content="线性回归,梯度下降法,最小二乘法,R^2指标," />
 
 
 
@@ -88,12 +88,12 @@
 <meta property="og:image" content="http://csliangl.github.io/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/factor.jpg">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/RM.jpg">
 <meta property="article:published_time" content="2020-04-20T16:14:10.000Z">
-<meta property="article:modified_time" content="2020-04-21T08:57:15.650Z">
+<meta property="article:modified_time" content="2020-04-21T09:05:10.507Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="线性回归">
 <meta property="article:tag" content="梯度下降法">
 <meta property="article:tag" content="最小二乘法">
-<meta property="article:tag" content="$R^2$指标">
+<meta property="article:tag" content="R^2指标">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://csliangl.github.io/2020/04/21/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E6%88%BF%E4%BB%B7/factor.jpg">
 
@@ -365,7 +365,7 @@
 </blockquote>
 <p>&emsp;&emsp;训练中常用的属性和方法有：</p>
 <blockquote>
-<p>coef_ : 输入端模型的系数，即权重w<br>intercept_ : 截距，即偏置b<br>fit(X, y, sample_weight=None) : 训练用的函数<br>get_params(deep=True) : 返回对regressor的设置值<br>score(X, y) : 返回$R^2$的值<br>predict(X) : 预测，基于$R^2$</p>
+<p>coef_ : 输入端模型的系数，即权重w<br>intercept_ : 截距，即偏置b<br>fit(X, y, sample_weight=None) : 训练用的函数<br>get_params(deep=True) : 返回对regressor的设置值<br>score(X, y) : 返回R^2的值<br>predict(X) : 预测，基于R^2</p>
 </blockquote>
 <p>&emsp;&emsp;对这些参数了解之后，就可以开始训练了。由于输入数据是一维的，所以无需标准化，直接训练。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对RM数据(每栋住宅的房间数)进行线性回归分析</span></span><br><span class="line">rm_X = df_ds[<span class="string">'RM'</span>].values.reshape((len(df_ds[<span class="string">'RM'</span>]), <span class="number">1</span>))</span><br><span class="line">rm_y = arr_ds.target</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression</span><br><span class="line">lr = LinearRegression()</span><br><span class="line">lr.fit(rm_X, rm_y)</span><br><span class="line">print(<span class="string">"确定性系数R^2的值:&#123;:.2f&#125;"</span>.format(lr.score(rm_X, rm_y)))</span><br><span class="line">print(<span class="string">"线性回归w的值:&#123;&#125;"</span>.format(lr.coef_))</span><br><span class="line">print(<span class="string">"线性回归b的值:&#123;&#125;"</span>.format(lr.intercept_))</span><br></pre></td></tr></table></figure>
@@ -402,7 +402,7 @@
           
             <a href="/tags/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95/" rel="tag"># 最小二乘法</a>
           
-            <a href="/tags/R-2-%E6%8C%87%E6%A0%87/" rel="tag"># $R^2$指标</a>
+            <a href="/tags/R-2%E6%8C%87%E6%A0%87/" rel="tag"># R^2指标</a>
           
         </div>
       
