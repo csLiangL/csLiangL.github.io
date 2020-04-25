@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="朴素贝叶斯,有监督," />
+  <meta name="keywords" content="有监督,朴素贝叶斯," />
 
 
 
@@ -87,10 +87,10 @@
 <meta property="og:description" content="引子&amp;emsp;&amp;emsp;分类问题是机器学习的一个重要方向，这次博客主要介绍朴素贝叶斯分类算法。实战部分以鸢尾花数据集为例，讲解如何使用sklearn库对数据集进行朴素贝叶斯分类学习。 实战&amp;emsp;&amp;emsp;&amp;emsp;首先我们使用datasets模块导入鸢尾花数据集，并将字典类型的数据集转化为DataFrame类型，方便进行行列索引操作。 123456from sklearn.datas">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/23/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E5%88%86%E7%B1%BB/predict0.2.jpg">
 <meta property="article:published_time" content="2020-04-23T13:03:52.000Z">
-<meta property="article:modified_time" content="2020-04-25T06:54:33.740Z">
+<meta property="article:modified_time" content="2020-04-25T07:35:48.104Z">
 <meta property="article:author" content="LiangL">
-<meta property="article:tag" content="朴素贝叶斯">
 <meta property="article:tag" content="有监督">
+<meta property="article:tag" content="朴素贝叶斯">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://csliangl.github.io/2020/04/23/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E5%88%86%E7%B1%BB/predict0.2.jpg">
 
@@ -362,9 +362,9 @@
 <blockquote>
 <p>fit(X,Y):在数据集(X,Y)上拟合模型。<br>get_params():获取模型参数。<br>predict(X):对数据集X进行预测。<br>predict_log_proba(X):对数据集X预测，得到每个类别的概率对数值。predict_proba(X):对数据集X预测，得到每个类别的概率。<br>score(X,Y):得到模型在数据集(X,Y)的得分情况。</p>
 </blockquote>
-<p>&emsp;&emsp;了解了这些参数之后，我们就可以尝试训练了。首先划分数据集前80%为训练集，后20%为测试集。然后实例化GaussianNB，进行训练。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># train_test_split (*arrays，test_size, train_size, rondom_state=None, shuffle=True, stratify=None)</span></span><br><span class="line"><span class="comment"># 建议使用此函数划分数据集,默认是打乱了原始数据的.</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> GaussianNB</span><br><span class="line">train_X, test_X, train_y, test_y = train_test_split(df_ds.values[:, :<span class="number">-1</span>], df_ds.values[:, <span class="number">-1</span>], test_size=<span class="number">0.2</span>)</span><br><span class="line">gnb = GaussianNB()</span><br><span class="line">gnb.fit(train_X, train_y)</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;训练过后，使用测试集来对模型进行检验，计算正确率与得分。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line">y = gnb.predict(test_X)</span><br><span class="line">df_pred = pd.DataFrame(y, columns=[<span class="string">'预测值'</span>])</span><br><span class="line">df_pred[<span class="string">'真实值'</span>] =test_y</span><br><span class="line">plt.scatter([i <span class="keyword">for</span> i <span class="keyword">in</span> range(len(test_X))], test_y, color=<span class="string">"black"</span>, marker=<span class="string">'v'</span>)</span><br><span class="line">plt.scatter([i <span class="keyword">for</span> i <span class="keyword">in</span> range(len(test_X))], y, color=<span class="string">"red"</span>, marker=<span class="string">"."</span>)</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line">plt.legend([<span class="string">'actual'</span>, <span class="string">'predict'</span>], bbox_to_anchor=(<span class="number">1</span>, <span class="number">0.9</span>))</span><br><span class="line">plt.savefig(<span class="string">"predict0.2.jpg"</span>, dpi=<span class="number">800</span>)</span><br><span class="line">right = len(df_pred[df_pred[<span class="string">'预测值'</span>]==df_pred[<span class="string">"真实值"</span>]])</span><br><span class="line">total= df_pred.shape[<span class="number">0</span>]</span><br><span class="line">print(<span class="string">"预测的准确率:&#123;:.2%&#125;"</span>.format(right/total))</span><br><span class="line">print(<span class="string">"得分:&#123;:.2f&#125;"</span>.format(gnb.score(test_X, test_y)))</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;输出为</p>
+<p>&emsp;&emsp;了解了这些参数之后，我们就可以尝试训练了。首先划分数据集前80%为训练集，后20%为测试集。然后实例化GaussianNB，进行训练。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># train_test_split (*arrays，test_size, train_size, rondom_state=None, shuffle=True, stratify=None)</span></span><br><span class="line"><span class="comment"># 建议使用此函数划分数据集,默认是打乱了原始数据的.</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> GaussianNB</span><br><span class="line">train_X, test_X, train_y, test_y = train_test_split(df_ds.values[:, :<span class="number">-1</span>], df_ds.values[:, <span class="number">-1</span>], test_size=<span class="number">0.2</span>)</span><br><span class="line">gnb = GaussianNB()</span><br><span class="line">gnb.fit(train_X, train_y)</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;训练过后，使用测试集来对模型进行检验，计算正确率与得分。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line">y = gnb.predict(test_X)</span><br><span class="line">plt.scatter([i <span class="keyword">for</span> i <span class="keyword">in</span> range(len(test_X))], test_y, color=<span class="string">"black"</span>, marker=<span class="string">'v'</span>)</span><br><span class="line">plt.scatter([i <span class="keyword">for</span> i <span class="keyword">in</span> range(len(test_X))], y, color=<span class="string">"red"</span>, marker=<span class="string">"."</span>)</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line">plt.xlabel(<span class="string">"sample"</span>)</span><br><span class="line">plt.ylabel(<span class="string">"category"</span>)</span><br><span class="line">plt.legend([<span class="string">'actual'</span>, <span class="string">'predict'</span>], bbox_to_anchor=(<span class="number">1</span>, <span class="number">0.9</span>))</span><br><span class="line">plt.savefig(<span class="string">"predict0.2.jpg"</span>, dpi=<span class="number">800</span>)</span><br><span class="line">print(<span class="string">"准确率:&#123;:.2%&#125;"</span>.format(gnb.score(test_X, test_y)))</span><br></pre></td></tr></table></figure><br>&emsp;&emsp;输出为</p>
 <blockquote>
-<p>预测的准确率:96.67%<br>得分:0.97</p>
+<p>准确率:96.67%</p>
 </blockquote>
 <p><img src="/2020/04/23/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E5%88%86%E7%B1%BB/predict0.2.jpg" alt="predict0.2"></p>
 <p>&emsp;&emsp;可以看出来朴素贝叶斯的分类能力还是比较强的，准确率达到96%以上，从图中也可以看的出来，30个样本中，只预测错误了一个。</p>
@@ -386,9 +386,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag"># 朴素贝叶斯</a>
-          
             <a href="/tags/%E6%9C%89%E7%9B%91%E7%9D%A3/" rel="tag"># 有监督</a>
+          
+            <a href="/tags/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag"># 朴素贝叶斯</a>
           
         </div>
       
