@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="引子&amp;emsp;&amp;emsp;EM算法，也叫最大期望算法，是一种聚类算法，常用于无监督学习。我认为EM算法是一种很神奇的算法，比如说，你做了五轮抛硬币的实验，每轮抛10次，实验结果如下  &amp;emsp;&amp;emsp;如果告诉你每轮实验都是用A硬币或者B硬币抛的，但是每一轮实验到底是用A抛的，还是B抛的就不知道了。请你计算A硬币抛出正面的概率。 &amp;emsp;&amp;emsp;事实上，这个问题并不好解答。但是如果">
+<meta name="description" content="引子&amp;emsp;&amp;emsp;EM算法，也叫最大期望算法，是一种聚类算法，常用于无监督学习。我认为EM算法是一种很神奇的算法，比如说，你做了五轮抛硬币的实验，每轮抛10次，实验结果如下                图a    &amp;emsp;&amp;emsp;如果告诉你每轮实验都是用A硬币或者B硬币抛的，但是每一轮实验到底是用A抛的，还是B抛的就不知道了。请你计算A硬币抛出正面的概率。 &amp;emsp;&amp;ems">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EM算法对鸢尾花无监督分类学习">
 <meta property="og:url" content="http://csliangl.github.io/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="无趣之人写的博客">
-<meta property="og:description" content="引子&amp;emsp;&amp;emsp;EM算法，也叫最大期望算法，是一种聚类算法，常用于无监督学习。我认为EM算法是一种很神奇的算法，比如说，你做了五轮抛硬币的实验，每轮抛10次，实验结果如下  &amp;emsp;&amp;emsp;如果告诉你每轮实验都是用A硬币或者B硬币抛的，但是每一轮实验到底是用A抛的，还是B抛的就不知道了。请你计算A硬币抛出正面的概率。 &amp;emsp;&amp;emsp;事实上，这个问题并不好解答。但是如果">
+<meta property="og:description" content="引子&amp;emsp;&amp;emsp;EM算法，也叫最大期望算法，是一种聚类算法，常用于无监督学习。我认为EM算法是一种很神奇的算法，比如说，你做了五轮抛硬币的实验，每轮抛10次，实验结果如下                图a    &amp;emsp;&amp;emsp;如果告诉你每轮实验都是用A硬币或者B硬币抛的，但是每一轮实验到底是用A抛的，还是B抛的就不知道了。请你计算A硬币抛出正面的概率。 &amp;emsp;&amp;ems">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/a.png">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/b.jpg">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/c.jpg">
 <meta property="og:image" content="http://csliangl.github.io/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/predict.jpg">
 <meta property="article:published_time" content="2020-04-25T11:40:13.000Z">
-<meta property="article:modified_time" content="2020-04-26T15:31:33.500Z">
+<meta property="article:modified_time" content="2020-04-26T15:47:23.078Z">
 <meta property="article:author" content="LiangL">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://csliangl.github.io/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/a.png">
@@ -324,10 +324,28 @@
 
       
         <h4 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h4><p>&emsp;&emsp;EM算法，也叫最大期望算法，是一种聚类算法，常用于无监督学习。我认为EM算法是一种很神奇的算法，比如说，你做了五轮抛硬币的实验，每轮抛10次，实验结果如下</p>
-<p><img src="/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/a.png" alt="a"></p>
+<center>
+    <img style="border-radius: 0.3125em;" src="/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/a.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 0px;">图a</div>
+</center>
+
+
 <p>&emsp;&emsp;如果告诉你每轮实验都是用A硬币或者B硬币抛的，但是每一轮实验到底是用A抛的，还是B抛的就不知道了。请你计算A硬币抛出正面的概率。</p>
 <p>&emsp;&emsp;事实上，这个问题并不好解答。但是如果实验结果是这样呢</p>
-<p><img src="/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/b.jpg" alt="b"></p>
+<center>
+    <img style="border-radius: 0.3125em;" src="/2020/04/25/EM%E7%AE%97%E6%B3%95%E5%AF%B9%E9%B8%A2%E5%B0%BE%E8%8A%B1%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB%E5%AD%A6%E4%B9%A0/b.jpg">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 0px;">图b</div>
+</center>
+
+
 <p>&emsp;&emsp;补全了表之后，可知用A硬币抛了20次，出现9次正面，那么A硬币抛出正面的概率就是$9/20$。</p>
 <p>&emsp;&emsp;通过这个例子我们发现，要解决刚开始提出的那个问题，只需要知道每轮投掷的硬币即可。怎么才能知道呢？</p>
 <p>&emsp;&emsp;我们似乎忽略了一个已知条件，每一次实验不管选择的是哪一枚硬币，出现正面的次数都服从二项分布，而且N=10。不同的是：如果使用A硬币，出现正面次数服从$B(10,p_{A正})$，如果使用B硬币，出现正面次数服从$B(10,p_{B正})$，其中$p_{A正}、p_{B正}$分别代表用硬币A、B抛出正面的概率，即模型的未知参数。</p>
@@ -748,6 +766,26 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
 
