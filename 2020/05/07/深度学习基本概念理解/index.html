@@ -91,7 +91,7 @@
 <meta property="og:image" content="http://csliangl.github.io/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/train.png">
 <meta property="og:image" content="http://csliangl.github.io/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/loss.jpg">
 <meta property="article:published_time" content="2020-05-07T01:04:39.000Z">
-<meta property="article:modified_time" content="2020-05-07T15:47:23.606Z">
+<meta property="article:modified_time" content="2020-05-07T15:52:40.356Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="mnist数据集">
 <meta name="twitter:card" content="summary">
@@ -389,7 +389,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 准备图像数据：(60000, 28, 28)-&gt;(60000, 28*28), [0, 255]-&gt;[0, 1]</span></span><br><span class="line">print(train_images[<span class="number">0</span>, <span class="number">8</span>]) <span class="comment"># 第一张图片的第8行数值</span></span><br><span class="line">train_images = train_images.reshape((<span class="number">60000</span>, <span class="number">28</span>*<span class="number">28</span>)).astype(<span class="string">'float'</span>) / <span class="number">255</span></span><br><span class="line">test_images = test_images.reshape((<span class="number">10000</span>, <span class="number">28</span>*<span class="number">28</span>)).astype(<span class="string">'float'</span>) / <span class="number">255</span></span><br><span class="line">print(train_images[<span class="number">0</span>, <span class="number">28</span>*<span class="number">7</span>:<span class="number">28</span>*<span class="number">8</span>]) <span class="comment">#第一张图片的第8行数值, 与归一化之前对比</span></span><br></pre></td></tr></table></figure>
 <p>图像数据处理完后，将标签数据通过to_categorical进行独热分类编码</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 准备标签</span></span><br><span class="line"><span class="keyword">from</span> keras.utils <span class="keyword">import</span> to_categorical</span><br><span class="line">train_labels = to_categorical(train_labels)</span><br><span class="line">test_labesls = to_categorical(test_labels)</span><br><span class="line">print(train_labels[<span class="number">0</span>]) <span class="comment"># 第一个标签编码后的数值</span></span><br></pre></td></tr></table></figure>
-<p>一切准备就绪，调用fit()函数开始训练。使用GPU加速，顺利的话应该20s左右就能完成训练。</p>
+<p>一切准备就绪，调用fit()函数开始训练。使用GPU加速，顺利的话应该10s左右就能完成训练。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history = network.fit(train_images, train_labels, epochs=<span class="number">10</span>, batch_size=<span class="number">128</span>, validation_split=<span class="number">0.2</span>, verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 <p>训练过程</p>
 <p><img src="/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/train.png" alt="train"></p>
