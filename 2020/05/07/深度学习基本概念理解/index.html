@@ -91,7 +91,7 @@
 <meta property="og:image" content="http://csliangl.github.io/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/train.png">
 <meta property="og:image" content="http://csliangl.github.io/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/loss.jpg">
 <meta property="article:published_time" content="2020-05-07T01:04:39.000Z">
-<meta property="article:modified_time" content="2020-05-07T15:52:40.356Z">
+<meta property="article:modified_time" content="2020-05-08T03:50:07.254Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="mnist数据集">
 <meta name="twitter:card" content="summary">
@@ -390,7 +390,7 @@
 <p>图像数据处理完后，将标签数据通过to_categorical进行独热分类编码</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 准备标签</span></span><br><span class="line"><span class="keyword">from</span> keras.utils <span class="keyword">import</span> to_categorical</span><br><span class="line">train_labels = to_categorical(train_labels)</span><br><span class="line">test_labesls = to_categorical(test_labels)</span><br><span class="line">print(train_labels[<span class="number">0</span>]) <span class="comment"># 第一个标签编码后的数值</span></span><br></pre></td></tr></table></figure>
 <p>一切准备就绪，调用fit()函数开始训练。使用GPU加速，顺利的话应该10s左右就能完成训练。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history = network.fit(train_images, train_labels, epochs=<span class="number">10</span>, batch_size=<span class="number">128</span>, validation_split=<span class="number">0.2</span>, verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history = network.fit(train_images, train_labels, epochs=<span class="number">5</span>, batch_size=<span class="number">128</span>, validation_split=<span class="number">0.2</span>, verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 <p>训练过程</p>
 <p><img src="/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/train.png" alt="train"></p>
 <p>可以看出来，不管是训练集还是验证集，loss整体是下降趋势，accuracy整体是上升趋势，并且在训练集上达到了98.8%的精度。现在我们调用evaluate()函数来检查模型在测试集上的性能。</p>
@@ -399,7 +399,7 @@
 <blockquote>
 <p>test_loss: 0.07190389850810171<br>test_acc: 0.9781000018119812</p>
 </blockquote>
-<p>可以看出来，经过5轮训练的模型在测试集上的精度达到了97.7%，比训练集要低一些。我们观察下面训练集和验证集的loss下降曲线，也能看出来验证集的效果要略差于训练集。这种差距是过拟合造成的，之后再讨论这个问题。</p>
+<p>可以看出来，经过5轮训练的模型在测试集上的精度达到了97.8%，比训练集要低一些。我们观察下面训练集和验证集的loss下降曲线，也能看出来验证集的效果要略差于训练集。这种差距是过拟合造成的，之后再讨论这个问题。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(history.history[<span class="string">'loss'</span>])</span><br><span class="line">plt.plot(history.history[<span class="string">'val_loss'</span>])</span><br><span class="line">plt.legend([<span class="string">'train'</span>, <span class="string">'validation'</span>])</span><br><span class="line">plt.savefig(<span class="string">"loss.jpg"</span>, dpi=<span class="number">800</span>)</span><br></pre></td></tr></table></figure>
 <p><img src="/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/loss.jpg" alt="loss"></p>
 
@@ -441,6 +441,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="prev" title="数据可视化">
+                数据可视化 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -521,7 +525,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -532,7 +536,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
