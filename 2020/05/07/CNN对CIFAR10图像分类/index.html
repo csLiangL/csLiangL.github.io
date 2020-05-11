@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="卷积神经网络：$输入层\rightarrow(卷积层+\rightarrow池化层?)+\rightarrow全连接层+$ 卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。  卷积核：可以看成是一个权值矩阵窗口，它会在二维输入数据上”滑动”，对当前输入元素做点积运算。 特征图：卷积操作后的图像就是特征图。 多通道卷积：每个卷积核都是一种特征提取方式，因此可以添加多个卷积核以提取不">
+<meta name="description" content="CNN概念卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。  卷积核：可以看成是一个权值矩阵窗口，它会在二维输入数据上”滑动”，对当前输入元素做点积运算。 特征图：卷积操作后的图像就是特征图。 多通道卷积：每个卷积核都是一种特征提取方式，因此可以对每个通道添加一个卷积核以提取该通道的特征。然后将生成的多张特征图相同位置上的值相加，生成一张特征图。最后给这张特征图加一个偏置项产生最">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CNN对CIFAR10图像分类">
-<meta property="og:url" content="http://csliangl.github.io/2020/05/03/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/index.html">
+<meta property="og:url" content="http://csliangl.github.io/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/index.html">
 <meta property="og:site_name" content="无趣之人写的博客">
-<meta property="og:description" content="卷积神经网络：$输入层\rightarrow(卷积层+\rightarrow池化层?)+\rightarrow全连接层+$ 卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。  卷积核：可以看成是一个权值矩阵窗口，它会在二维输入数据上”滑动”，对当前输入元素做点积运算。 特征图：卷积操作后的图像就是特征图。 多通道卷积：每个卷积核都是一种特征提取方式，因此可以添加多个卷积核以提取不">
-<meta property="article:published_time" content="2020-05-03T07:51:23.000Z">
-<meta property="article:modified_time" content="2020-05-07T15:28:54.464Z">
+<meta property="og:description" content="CNN概念卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。  卷积核：可以看成是一个权值矩阵窗口，它会在二维输入数据上”滑动”，对当前输入元素做点积运算。 特征图：卷积操作后的图像就是特征图。 多通道卷积：每个卷积核都是一种特征提取方式，因此可以对每个通道添加一个卷积核以提取该通道的特征。然后将生成的多张特征图相同位置上的值相加，生成一张特征图。最后给这张特征图加一个偏置项产生最">
+<meta property="article:published_time" content="2020-05-07T07:51:23.000Z">
+<meta property="article:modified_time" content="2020-05-11T16:05:28.744Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="CNN">
 <meta property="article:tag" content="CIFAR10数据集">
@@ -120,7 +120,7 @@
 
 
 
-  <link rel="canonical" href="http://csLiangL.github.io/2020/05/03/CNN对CIFAR10图像分类/"/>
+  <link rel="canonical" href="http://csLiangL.github.io/2020/05/07/CNN对CIFAR10图像分类/"/>
 
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://csLiangL.github.io/2020/05/03/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/">
+    <link itemprop="mainEntityOfPage" href="http://csLiangL.github.io/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LiangL">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-03T15:51:23+08:00">
-                2020-05-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-07T15:51:23+08:00">
+                2020-05-07
               </time>
             
 
@@ -342,12 +342,11 @@
       
 
       
-        <p>卷积神经网络：$输入层\rightarrow(卷积层+\rightarrow池化层?)+\rightarrow全连接层+$</p>
-<p>卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。</p>
+        <h4 id="CNN概念"><a href="#CNN概念" class="headerlink" title="CNN概念"></a>CNN概念</h4><p>卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。</p>
 <ul>
 <li>卷积核：可以看成是一个权值矩阵窗口，它会在二维输入数据上”滑动”，对当前输入元素做点积运算。</li>
 <li>特征图：卷积操作后的图像就是特征图。</li>
-<li><p>多通道卷积：每个卷积核都是一种特征提取方式，因此可以添加多个卷积核以提取不同的特征。然后将生成的多张特折图相同位置上的值相加，生成一张特征图。最后给这张特征图 加一个偏置项产生最终的输出特征图。</p>
+<li><p>多通道卷积：每个卷积核都是一种特征提取方式，因此可以对每个通道添加一个卷积核以提取该通道的特征。然后将生成的多张特征图相同位置上的值相加，生成一张特征图。最后给这张特征图加一个偏置项产生最终的输出特征图。</p>
 </li>
 <li><p>Padding：用额外的”假”像素填充原始边缘，使输出尺寸与输入保持一致</p>
 </li>
@@ -362,43 +361,41 @@
 <li><p>事实上，使用卷积步长大于一的降维效果要好于池化。</p>
 </li>
 </ul>
-<p>卷积神经网络参数</p>
-<p>实战</p>
-<ul>
-<li><p>建立模型</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model.add(layers)</span><br><span class="line">其中layers常见的有</span><br></pre></td></tr></table></figure>
+<h4 id="模型形式"><a href="#模型形式" class="headerlink" title="模型形式"></a>模型形式</h4><p>$输入层\rightarrow(卷积层+\rightarrow池化层?)+\rightarrow全连接层+$</p>
+<h4 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h4><ul>
+<li><p>导入数据(采用cifar10数据集)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> keras</span><br><span class="line">cifar10 = keras.datasets.cifar10</span><br><span class="line">(X_train, y_train), (X_test, y_test) = cifar10.load_data()</span><br><span class="line">print(<span class="string">'训练集：'</span>, X_train.shape, y_train.shape) <span class="comment"># (50000, 32, 32, 3) (50000, 1)</span></span><br><span class="line">print(<span class="string">'测试集：'</span>, X_test.shape, y_test.shape) <span class="comment"># (10000, 32, 32, 3) (10000, 1)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>建立模型，两层卷积，两层池化，提取特征后添加全连接层输出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Conv2D, Dropout, MaxPooling2D, Flatten, Dense</span><br><span class="line"><span class="comment"># 搭建网络</span></span><br><span class="line">model = Sequential([</span><br><span class="line">    Conv2D(input_shape=(<span class="number">32</span>, <span class="number">32</span>, <span class="number">3</span>), filters=<span class="number">32</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">'relu'</span>, padding=<span class="string">'same'</span>), <span class="comment"># 第1个卷积层:通道 3-&gt;32</span></span><br><span class="line">    Dropout(rate=<span class="number">0.3</span>), <span class="comment"># 冻结30%神经元,防止过拟合 </span></span><br><span class="line">    MaxPooling2D(pool_size=(<span class="number">2</span>, <span class="number">2</span>)), <span class="comment"># 第1个池化层</span></span><br><span class="line">    Conv2D(filters=<span class="number">64</span>, kernel_size=(<span class="number">3</span>, <span class="number">3</span>), activation=<span class="string">'relu'</span>, padding=<span class="string">'same'</span>),<span class="comment"># 第2个卷积层:通道 32-&gt;64</span></span><br><span class="line">    Dropout(rate=<span class="number">0.3</span>), </span><br><span class="line">    MaxPooling2D(pool_size=(<span class="number">2</span>, <span class="number">2</span>)), <span class="comment"># 第2个池化层</span></span><br><span class="line">    Flatten(), <span class="comment"># 平坦层</span></span><br><span class="line">    Dense(<span class="number">128</span>, activation=<span class="string">'relu'</span>), <span class="comment"># 添加全连接层</span></span><br><span class="line">    Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>) <span class="comment"># 添加输出层</span></span><br><span class="line">])</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>编译模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译网络</span></span><br><span class="line">model.compile(optimizer=<span class="string">'adam'</span>, loss=<span class="string">'sparse_categorical_crossentropy'</span>, metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>训练模型</p>
-</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">train_history = model.fit(X_train, y_train, validation_split=<span class="number">0.2</span>, epochs=<span class="number">50</span>, batch_size=<span class="number">32</span>, verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure></li>
+<li>评估模型</li>
 </ul>
-<p>改进方式</p>
-<ul>
-<li>增加网络层数</li>
-<li>增加迭代次数</li>
-<li>增加全连接层数</li>
-<li>增加全连接的神经元个数</li>
-<li>数据扩增，等等</li>
-</ul>
-<p>影响神经网络效果的因素：</p>
-<ul>
-<li>层</li>
-<li>梯度更新方式</li>
-<li>初始化方式</li>
-<li>非线性</li>
-<li>目标函数</li>
-<li>正规项</li>
-</ul>
-<p>神经网络训练流程：</p>
-<ol>
+<h4 id="训练流程："><a href="#训练流程：" class="headerlink" title="训练流程："></a>训练流程：</h4><ol>
 <li>选择n个样本组成一个batch，将这个batch丢到神经网络，得到输出结果</li>
 <li>将输出结果与label丢给loss函数算出本轮的loss。</li>
 <li>跑BP算法从后往前逐层计算参数之于loss的导数，将每个参数的导数配合步长参数来进行参数更新。</li>
 </ol>
 <p>以上就是训练过程的一次迭代。</p>
-<p>调参：</p>
-<ol>
+<h4 id="影响因素"><a href="#影响因素" class="headerlink" title="影响因素"></a>影响因素</h4><ul>
+<li>网络层数</li>
+<li>每层神经元个数</li>
+<li>迭代次数</li>
+<li><p>批大小</p>
+</li>
+<li><p>梯度更新方式</p>
+</li>
+<li>初始化方式</li>
+<li>非线性</li>
+<li>目标函数</li>
+<li>正规项</li>
+</ul>
+<h4 id="调参："><a href="#调参：" class="headerlink" title="调参："></a>调参：</h4><ol>
 <li>数据预处理</li>
 </ol>
 <ul>
@@ -448,8 +445,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/05/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/" rel="next" title="机器学习入门">
-                <i class="fa fa-chevron-left"></i> 机器学习入门
+              <a href="/2020/05/03/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/" rel="next" title="深度学习入门">
+                <i class="fa fa-chevron-left"></i> 深度学习入门
               </a>
             
           </div>
@@ -458,8 +455,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/05/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3/" rel="prev" title="深度学习入门">
-                深度学习入门 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="prev" title="数据可视化">
+                数据可视化 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -512,8 +509,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -593,6 +599,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#CNN概念"><span class="nav-number">1.</span> <span class="nav-text">CNN概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模型形式"><span class="nav-number">2.</span> <span class="nav-text">模型形式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实战"><span class="nav-number">3.</span> <span class="nav-text">实战</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#训练流程："><span class="nav-number">4.</span> <span class="nav-text">训练流程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#影响因素"><span class="nav-number">5.</span> <span class="nav-text">影响因素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调参："><span class="nav-number">6.</span> <span class="nav-text">调参：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
