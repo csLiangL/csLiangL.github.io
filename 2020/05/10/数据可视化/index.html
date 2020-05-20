@@ -94,8 +94,10 @@
 <meta property="og:image" content="http://csliangl.github.io/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/%E5%AF%B9%E7%A7%B0%E5%8E%9F%E5%88%99.png">
 <meta property="og:image" content="http://csliangl.github.io/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/%E7%BB%8F%E9%AA%8C%E5%8E%9F%E5%88%99.png">
 <meta property="og:image" content="http://csliangl.github.io/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/%E4%BE%8B%E5%AD%90.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/%E9%97%B5%E5%8F%AF%E5%A4%AB%E6%96%AF%E5%9F%BA%E8%B7%9D%E7%A6%BB.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/7_blog/source/_posts/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/%E7%AE%B1%E7%BA%BF%E5%9B%BE.png">
 <meta property="article:published_time" content="2020-05-10T01:32:54.000Z">
-<meta property="article:modified_time" content="2020-05-10T16:05:37.578Z">
+<meta property="article:modified_time" content="2020-05-20T14:02:13.720Z">
 <meta property="article:author" content="LiangL">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://csliangl.github.io/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/%E6%8E%A5%E8%BF%91%E5%8E%9F%E5%88%99.png">
@@ -402,6 +404,26 @@
 <p><img src="/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/例子.png" alt="例子"></p>
 </li>
 </ol>
+<h4 id="关于数据"><a href="#关于数据" class="headerlink" title="关于数据"></a>关于数据</h4><p>相异性矩阵：刻画数据对象之间的相似性，矩阵第i行第j列元素值为：第i个数据对象与第j个数据对象的距离d(i, j)。</p>
+<p>失配比：计算类别属性的距离，计算公式：值不相等的属性个数占总属性个数的比例。</p>
+<p>闵可夫斯基距离：计算数值属性的距离，计算公式：$d_{Mk}=\sqrt[p]{\sum\limits_{i=1}^d\left|P_i-Q_i\right|}$，p=1时为曼哈顿距离，p=2时为欧拉距离，p$\rightarrow\infty$时为切比雪夫距离$max_{i=1}^d\left|P_i-Q_i\right|$。下图是当p分别为1、2、$\infty$时，与原点距离为3的图像。</p>
+<p><img src="/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/闵可夫斯基距离.png" alt="闵可夫斯基距离"></p>
+<p>选取合适的视图对数据进行可视化可以用来清洗数据。</p>
+<h5 id="选择视图："><a href="#选择视图：" class="headerlink" title="选择视图："></a>选择视图：</h5><p>数据轨迹：是一种<strong>单变量数据</strong>呈现方法，将自变量与因变量在图中用点呈现出来，可以直观地展现数据<strong>分布</strong>、<strong>走势</strong>以及<strong>离群异常点</strong>。</p>
+<p>柱状图：用长方形的形状与颜色编码数据的属性，揭示数据的<strong>趋势</strong>与<strong>分布</strong>。</p>
+<p>饼状图：用环状方式呈现各分量在整体之中的比例，快速直观地传达数据中的<strong>比例</strong>信息。</p>
+<p>直方图：对数据集的某个数据属性的<strong>频率</strong>统计，每个区间的数据之和为数据集整体。</p>
+<p>等高线图：将相等数值所在的位置用曲线连接起来所形成的图形，反映数据的<strong>连续变化</strong>与<strong>分布情况</strong>。</p>
+<p>走势图：通常以折线图为基础，反映简单的<strong>数据变化趋势。</strong></p>
+<p>散点图：当数据大于二维时$\rightarrow$所有维度两两取出$\rightarrow$每对维度一个散点图$\rightarrow$所有散点图形成散点图矩阵。</p>
+<p>热力图：有3个维度的数据，利用<strong>颜色</strong>属性，将第三个维度映射为颜色值，此时就成了热力图，可以查看三维数据的<strong>分布</strong>情况。</p>
+<p>箱线图：用长方形的盒子表示数据的主体范围，通过观察盒子的长度可以很容易地看出数据分布的大致结果。</p>
+<p><img src="/2020/05/10/%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/7_blog\source\_posts\数据可视化\箱线图.png" alt="箱线图" style="zoom:50%;"></p>
+<p>多协同视图：将多个视图结合起来，每个视图展现数据的某个方面的属性，并允许用户进行交互分析。</p>
+<h5 id="数据挖掘"><a href="#数据挖掘" class="headerlink" title="数据挖掘"></a>数据挖掘</h5><p>从大型数据库、网络上或其他大型储存库中，自动地发现和提取模式、特征或知识，这些知识是非常规的或以前未知的信息。</p>
+<p>描述型任务：通过算法(例如概念描述、关联规则、聚类模式、异常分析)从数据中挖掘特征，利用这些特征来对数据进行描述、解释和总结。</p>
+<p>预测型任务：首先通过训练数据得到一个模型，然后将这个模型运用到新的数据集中，用来对这个数据集进行判断，得出结果。</p>
+<p>常用方法：统计学习(回归分析、参数估计)，机器学习(决策树、神经网络)，传统算法(K均值、K临近)</p>
 
       
     </div>
@@ -435,6 +457,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/15/%E8%B8%A9%E5%9D%91%E8%AE%B0-win10%E5%AE%89%E8%A3%85ubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="prev" title="踩坑记--win10安装ubuntu虚拟机">
+                踩坑记--win10安装ubuntu虚拟机 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -515,7 +541,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -526,7 +552,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -537,7 +563,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -586,7 +612,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#可视化的研究内容"><span class="nav-number">1.</span> <span class="nav-text">可视化的研究内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可视化工具"><span class="nav-number">2.</span> <span class="nav-text">可视化工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#视觉感知与认知："><span class="nav-number">3.</span> <span class="nav-text">视觉感知与认知：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#可视化的研究内容"><span class="nav-number">1.</span> <span class="nav-text">可视化的研究内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可视化工具"><span class="nav-number">2.</span> <span class="nav-text">可视化工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#视觉感知与认知："><span class="nav-number">3.</span> <span class="nav-text">视觉感知与认知：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于数据"><span class="nav-number">4.</span> <span class="nav-text">关于数据</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#选择视图："><span class="nav-number">4.1.</span> <span class="nav-text">选择视图：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据挖掘"><span class="nav-number">4.2.</span> <span class="nav-text">数据挖掘</span></a></li></ol></li></ol></div>
             
 
           </div>

@@ -85,12 +85,15 @@
 <meta property="og:url" content="http://csliangl.github.io/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/index.html">
 <meta property="og:site_name" content="无趣之人写的博客">
 <meta property="og:description" content="CNN概念卷积：探测上一层特征的局部连接，即使得原信号特征加强，并降低噪音。  卷积核：可以看成是一个权值矩阵窗口，它会在二维输入数据上”滑动”，对当前输入元素做点积运算。 特征图：卷积操作后的图像就是特征图。 多通道卷积：每个卷积核都是一种特征提取方式，因此可以对每个通道添加一个卷积核以提取该通道的特征。然后将生成的多张特征图相同位置上的值相加，生成一张特征图。最后给这张特征图加一个偏置项产生最">
+<meta property="og:image" content="http://csliangl.github.io/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/predict.jpg">
+<meta property="og:image" content="http://csliangl.github.io/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/loss.jpg">
 <meta property="article:published_time" content="2020-05-07T07:51:23.000Z">
-<meta property="article:modified_time" content="2020-05-11T16:05:28.744Z">
+<meta property="article:modified_time" content="2020-05-20T14:07:34.266Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="CNN">
 <meta property="article:tag" content="CIFAR10数据集">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://csliangl.github.io/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/predict.jpg">
 
 
 
@@ -373,9 +376,14 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译网络</span></span><br><span class="line">model.compile(optimizer=<span class="string">'adam'</span>, loss=<span class="string">'sparse_categorical_crossentropy'</span>, metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>训练模型</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">train_history = model.fit(X_train, y_train, validation_split=<span class="number">0.2</span>, epochs=<span class="number">50</span>, batch_size=<span class="number">32</span>, verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure></li>
-<li>评估模型</li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">train_history = model.fit(X_train, y_train, validation_split=<span class="number">0.2</span>, epochs=<span class="number">50</span>, batch_size=<span class="number">32</span>, verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>评估模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_images_labels_prediction</span><span class="params">(images, labels, preds, index, num=<span class="number">10</span>)</span>:</span></span><br><span class="line">    fig = plt.gcf()</span><br><span class="line">    fig.set_size_inches(<span class="number">12</span>, <span class="number">6</span>)</span><br><span class="line">    <span class="keyword">if</span> num&gt;<span class="number">10</span>:</span><br><span class="line">        num=<span class="number">10</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, num):</span><br><span class="line">        ax=plt.subplot(<span class="number">2</span>, <span class="number">5</span>, i+<span class="number">1</span>)</span><br><span class="line">        ax.imshow(images[index])</span><br><span class="line">        title = label_dict[labels[index][<span class="number">0</span>]] + <span class="string">'=&gt;'</span> + label_dict[preds[index]]</span><br><span class="line">        ax.set_title(title, fontsize=<span class="number">10</span>)</span><br><span class="line">        index += <span class="number">1</span></span><br><span class="line">    plt.show()</span><br><span class="line">    fig.savefig(<span class="string">'predict.jpg'</span>, dpi=<span class="number">800</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可视化预测结果</span></span><br><span class="line">preds = model.predict_classes(X_test)</span><br><span class="line">label_dict = &#123;<span class="number">0</span>:<span class="string">'airplane'</span>, <span class="number">1</span>:<span class="string">'automobile'</span>, <span class="number">2</span>:<span class="string">'bird'</span>, <span class="number">3</span>:<span class="string">'cat'</span>, <span class="number">4</span>:<span class="string">'deer'</span>,</span><br><span class="line">              <span class="number">5</span>:<span class="string">'dog'</span>, <span class="number">6</span>:<span class="string">'frog'</span>, <span class="number">7</span>:<span class="string">'horse'</span>, <span class="number">8</span>:<span class="string">'ship'</span>, <span class="number">9</span>:<span class="string">'truck'</span>&#125;</span><br><span class="line">plot_images_labels_prediction(X_test, y_test, preds, <span class="number">0</span>)</span><br><span class="line"><span class="comment"># 评估模型</span></span><br><span class="line">test_loss, test_acc = model.evaluate(X_test, y_test)</span><br><span class="line">print(<span class="string">'test_loss:'</span>, test_loss) <span class="comment"># test_loss: 1.4810904417037964</span></span><br><span class="line">print(<span class="string">'test_acc:'</span>, test_acc) <span class="comment"># test_acc: 0.6288999915122986</span></span><br></pre></td></tr></table></figure>
+</li>
 </ul>
+<p><img src="/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/predict.jpg" alt="predict"></p>
+<p><img src="/2020/05/07/CNN%E5%AF%B9CIFAR10%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB/loss.jpg" alt="loss"></p>
 <h4 id="训练流程："><a href="#训练流程：" class="headerlink" title="训练流程："></a>训练流程：</h4><ol>
 <li>选择n个样本组成一个batch，将这个batch丢到神经网络，得到输出结果</li>
 <li>将输出结果与label丢给loss函数算出本轮的loss。</li>
@@ -538,7 +546,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -549,7 +557,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -560,7 +568,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
