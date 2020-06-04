@@ -79,17 +79,19 @@
 
 
 
-<meta name="description" content="小时候真傻，居然盼着长大">
+<meta name="description" content="引子想象一个场景：现在有近九万条新闻(如下图所示)，其中一部分新闻来自于新华社，还有一部分新闻来自其他媒体，如何判断其他媒体是不是抄袭了新华社的新闻呢？  其中关键在于衡量文章的特征，以及两篇文章特征的相似关系，而在文本数据中常见的特征就是关键词。因此我们可以采取以下办法  分词：按照一定规则进行提取、筛选所有文章的关键词组成特征列表 编码：每篇文章按特征列表转化成向量，如特征单词出现为1，否则为">
 <meta property="og:type" content="article">
 <meta property="og:title" content="tfidf模型构建查重系统">
 <meta property="og:url" content="http://csliangl.github.io/2020/06/04/tfidf%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA%E6%9F%A5%E9%87%8D%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="无趣之人写的博客">
-<meta property="og:description" content="小时候真傻，居然盼着长大">
+<meta property="og:description" content="引子想象一个场景：现在有近九万条新闻(如下图所示)，其中一部分新闻来自于新华社，还有一部分新闻来自其他媒体，如何判断其他媒体是不是抄袭了新华社的新闻呢？  其中关键在于衡量文章的特征，以及两篇文章特征的相似关系，而在文本数据中常见的特征就是关键词。因此我们可以采取以下办法  分词：按照一定规则进行提取、筛选所有文章的关键词组成特征列表 编码：每篇文章按特征列表转化成向量，如特征单词出现为1，否则为">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/04/tfidf%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA%E6%9F%A5%E9%87%8D%E7%B3%BB%E7%BB%9F/%E5%BC%95%E5%AD%90.png">
 <meta property="article:published_time" content="2020-06-04T08:03:28.000Z">
-<meta property="article:modified_time" content="2020-06-04T08:04:07.641Z">
+<meta property="article:modified_time" content="2020-06-04T16:32:50.718Z">
 <meta property="article:author" content="LiangL">
 <meta property="article:tag" content="tfidf">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://csliangl.github.io/2020/06/04/tfidf%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA%E6%9F%A5%E9%87%8D%E7%B3%BB%E7%BB%9F/%E5%BC%95%E5%AD%90.png">
 
 
 
@@ -304,8 +306,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index">
-                    <span itemprop="name">推荐系统</span>
+                  <a href="/categories/%E9%A1%B9%E7%9B%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">项目</span>
                   </a>
                 </span>
 
@@ -341,7 +343,31 @@
       
 
       
-        
+        <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>想象一个场景：现在有近九万条新闻(如下图所示)，其中一部分新闻来自于新华社，还有一部分新闻来自其他媒体，如何判断其他媒体是不是抄袭了新华社的新闻呢？</p>
+<p><img src="/2020/06/04/tfidf%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA%E6%9F%A5%E9%87%8D%E7%B3%BB%E7%BB%9F/引子.png" alt></p>
+<p>其中关键在于衡量文章的特征，以及两篇文章特征的相似关系，而在文本数据中常见的特征就是关键词。因此我们可以采取以下办法</p>
+<ol>
+<li>分词：按照一定规则进行提取、筛选所有文章的关键词组成特征列表</li>
+<li>编码：每篇文章按特征列表转化成向量，如特征单词出现为1，否则为0</li>
+<li>聚类：一般都是同类型文章间抄袭，因此按编码后的特征向量聚类</li>
+<li>计算：计算同一簇内非新华社文章与新华社文章的相似度</li>
+</ol>
+<p>提取文章中的关键词常用的方法是：tfidf(item frequency–inverse document frequency)</p>
+<ul>
+<li>tf：词频，显然词频越大，越有可能是文章的关键词</li>
+<li>idf：计算公式(sklearn中)为$log(\frac{文档数+1}{包含该单词的文档数+1})+1$，显然包含该单词的文档数越少，即该单词不太常见，则idf值越大</li>
+<li>tfidf：计算公式tf*idf。显然tfidf越大，筛选出的越是不太常见但重要的词语。</li>
+</ul>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>导入数据<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="comment"># 导入新闻数据和停用词</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'chinese_stopwords.txt'</span>, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> file:</span><br><span class="line">    stopwords = [line[:<span class="number">-1</span>] <span class="keyword">for</span> line <span class="keyword">in</span> file.readlines()]</span><br><span class="line">news = pd.read_csv(<span class="string">'sqlResult.csv'</span>, encoding=<span class="string">'gb18030'</span>)</span><br><span class="line"><span class="comment"># 处理缺失值</span></span><br><span class="line">news = news.dropna(subset=[<span class="string">'content'</span>])</span><br></pre></td></tr></table></figure><br>对所有新闻分词，然后筛选掉无意义的停用词，用corpus存放所有分词结果。由于数据量较大，运行一次可能需要二十分钟，可以用pickle将运行结果保存下来，下次就不用再跑一次了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jieba</span><br><span class="line"><span class="comment"># 分词</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">split_text</span><span class="params">(text)</span>:</span></span><br><span class="line">    text = text.replace(<span class="string">' '</span>, <span class="string">''</span>) <span class="comment"># 去除所有空格</span></span><br><span class="line">    text = text.replace(<span class="string">'\n'</span>, <span class="string">''</span>) <span class="comment"># 去除所有换行符</span></span><br><span class="line">    text = text.replace(<span class="string">'\r'</span>, <span class="string">''</span>) <span class="comment"># 去除所有回车符</span></span><br><span class="line">    text2 = jieba.lcut(text.strip())</span><br><span class="line">    print(text2)</span><br><span class="line">    result = <span class="string">' '</span>.join([w <span class="keyword">for</span> w <span class="keyword">in</span> text2 <span class="keyword">if</span> w <span class="keyword">not</span> <span class="keyword">in</span> stopwords])</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">print(news.iloc[<span class="number">0</span>].content)</span><br><span class="line">print(<span class="string">'\n'</span>, split_text(news.iloc[<span class="number">0</span>].content))</span><br><span class="line"><span class="comment"># 得到语料库corpus</span></span><br><span class="line"><span class="keyword">import</span> pickle, os</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">'corpus.pkl'</span>):</span><br><span class="line">    corpus = list(map(split_text, [str(item) <span class="keyword">for</span> item <span class="keyword">in</span> news.content]))</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'corpus.pkl'</span>, <span class="string">'wb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        pickle.dump(corpus, file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="comment"># 调用上次的处理结果</span></span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'corpus.pkl'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        corpus = pickle.load(file)</span><br></pre></td></tr></table></figure></p>
+<p>sklearn中有现成的tfidf的接口可以调用，min_df代表最小词频，这样tfidf中存放了所有新闻的特征向量。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer, TfidfTransformer, TfidfVectorizer</span><br><span class="line"><span class="comment"># 处理预料库，提取每条新闻的特征单词</span></span><br><span class="line">countvectorizer = CountVectorizer(encoding=<span class="string">'gb18030'</span>, min_df=<span class="number">0.02</span>) <span class="comment"># 提取所有文档中词频大于min_df的特征单词, countvectorizer.get_feature_names()</span></span><br><span class="line">countvector = countvectorizer.fit_transform(corpus) <span class="comment"># 返回各特征单词在每个文档中出现次数的矩阵</span></span><br><span class="line">tfidftransformer = TfidfTransformer()</span><br><span class="line">tfidf = tfidftransformer.fit_transform(countvector)</span><br><span class="line"><span class="comment"># tfidfvectorizer = TfidfVectorizer(min_df=0.3) # 上述语句可用以下两句代替，效果相同且更为简便</span></span><br><span class="line"><span class="comment"># tfidf = tfidfvectorizer.fit_transform(corpus)</span></span><br></pre></td></tr></table></figure></p>
+<p>接下来根据每条新闻的tfidf向量进行聚类。聚类分析也比较耗时，因此将运行结果保存。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对全量文档按tfidf聚类</span></span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> Normalizer</span><br><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br><span class="line"><span class="comment"># 保存到文件</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">'cluster.pkl'</span>):</span><br><span class="line">    normalizer = Normalizer()</span><br><span class="line">    scaled = normalizer.fit_transform(tfidf.toarray()) <span class="comment"># 归一化</span></span><br><span class="line">    kmeans = KMeans(n_clusters=<span class="number">25</span>) <span class="comment"># 这里将新闻分成25类</span></span><br><span class="line">    k_labels = kmeans.fit_predict(scaled)</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'cluster.pkl'</span>, <span class="string">'wb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        pickle.dump(k_labels, file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'cluster.pkl'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        k_labels = pickle.load(file)</span><br></pre></td></tr></table></figure></p>
+<p>接下来就可以在簇内计算非新华社新闻和新华社新闻的相似度了。不过在此之前，我们可以使用贝叶斯分类器以每条新闻的tfidf向量为特征，以是否为新华社的文章作为标签，来构造模型。将预测为”新华社”新闻，但实际非”新华社”新闻挑选出来，作为”疑似抄袭”的对象，这样可以进一步缩减之后相似度计算量。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 筛选嫌疑文章</span></span><br><span class="line"><span class="comment"># 准备训练集</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">label = list(map(<span class="keyword">lambda</span> source: <span class="number">1</span> <span class="keyword">if</span> <span class="string">'新华社'</span> <span class="keyword">in</span> str(source) <span class="keyword">else</span> <span class="number">0</span>, news.source))</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(tfidf.toarray(), label, test_size=<span class="number">0.3</span>)</span><br><span class="line"><span class="comment"># 准备分类模型</span></span><br><span class="line"><span class="keyword">from</span> sklearn.naive_bayes <span class="keyword">import</span> MultinomialNB</span><br><span class="line">clf = MultinomialNB() <span class="comment"># 假设先验分布为多项式分布</span></span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line"><span class="comment"># 筛选出预测是新华社，但实际不是(疑似抄袭的)文章</span></span><br><span class="line">prediction  = clf.predict(tfidf.toarray())</span><br><span class="line">compare = pd.DataFrame(&#123;<span class="string">'prediction'</span>:prediction, <span class="string">'label'</span>:label&#125;)</span><br><span class="line">copy = compare[(compare[<span class="string">'prediction'</span>]==<span class="number">1</span>) &amp; (compare[<span class="string">'label'</span>]==<span class="number">0</span>)]</span><br><span class="line">xinhua = compare[compare[<span class="string">'label'</span>]==<span class="number">1</span>].index</span><br></pre></td></tr></table></figure></p>
+<p>这样一来，所有”疑似抄袭”的新闻都放在了copy中了。接下来就是计算每条“疑似抄袭”新闻与所有”新华社”新闻之间的相似度了，这里选定阈值为0.87，如果余弦相似度超过0.87，则认为该”疑似抄袭”新闻确实抄袭了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找相似文档:与嫌疑文章同类，且相似度 &gt; 0.87</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics.pairwise <span class="keyword">import</span> cosine_similarity</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_similar_text</span><span class="params">(cpindex, top=<span class="number">10</span>)</span>:</span></span><br><span class="line">    simibase=<span class="number">0.87</span></span><br><span class="line">    simiindex = [] <span class="comment"># 新华社中相似文章</span></span><br><span class="line">    similarity = [] <span class="comment"># 相似文章的相似度</span></span><br><span class="line">    <span class="comment"># 在新华社发布的同类文章中查找</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xinhua:</span><br><span class="line">        <span class="keyword">if</span> k_labels[i]==k_labels[cpindex]:</span><br><span class="line">            similar = cosine_similarity(tfidf[cpindex], tfidf[i])[<span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line">            <span class="keyword">if</span> similar &gt;= simibase:</span><br><span class="line">                simiindex.append(i)</span><br><span class="line">                similarity.append(similar)</span><br><span class="line">    <span class="keyword">return</span> simiindex, similarity</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算抄袭文章索引、所属类别、新华社相似文章索引以及相似度</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">'results_simi0.87.pkl'</span>):</span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> copy.index:</span><br><span class="line">        simiindex, similarity = find_similar_text(i)</span><br><span class="line">        <span class="keyword">if</span> len(simiindex) &gt; <span class="number">0</span>:</span><br><span class="line">            results.append([i, k_labels[i], simiindex, similarity])</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'results_simi0.87.pkl'</span>, <span class="string">'wb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        pickle.dump(results, file)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'results_simi0.87.pkl'</span>, <span class="string">'rb'</span>) <span class="keyword">as</span> file:</span><br><span class="line">        results = pickle.load(file)</span><br></pre></td></tr></table></figure><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最后输出</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> results:</span><br><span class="line">    print(<span class="string">'抄袭文章编号:'</span>, item[<span class="number">0</span>])</span><br><span class="line">    print(<span class="string">'类型:'</span>, item[<span class="number">1</span>])</span><br><span class="line">    print(<span class="string">'出处:'</span>, news.iloc[item[<span class="number">0</span>]].source)</span><br><span class="line">    print(<span class="string">'新华社相似文章编号:'</span>, item[<span class="number">2</span>])</span><br><span class="line">    print(<span class="string">'相似度:'</span>, item[<span class="number">3</span>])</span><br><span class="line">    print(<span class="string">'-'</span>*<span class="number">100</span>)</span><br></pre></td></tr></table></figure></p>
+<p>由于设置的阈值比较高，因此筛选出的”抄袭文章”较少</p>
+<p>&gt;</p>
+<h1 id="扩展"><a href="#扩展" class="headerlink" title="# 扩展"></a># 扩展</h1><p><em>手动计算tfidf</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer, TfidfTransformer, TfidfVectorizer</span><br><span class="line"><span class="comment"># 得到corpus的TF矩阵</span></span><br><span class="line">countvectorizer = CountVectorizer(encoding=<span class="string">'gb18030'</span>, min_df=<span class="number">0.3</span>) <span class="comment"># 提取所有文档中词频大于min_df的特征单词, countvectorizer.get_feature_names()</span></span><br><span class="line">countvector = countvectorizer.fit_transform(corpus) <span class="comment"># 返回各特征单词在每个文档中出现次数的矩阵</span></span><br><span class="line"><span class="comment"># 计算倒数第三条新闻中"新华社""记者"的tf和idf(因为倒数第三条新闻仅有新华社和记者两个高频词，方便后面归一化)</span></span><br><span class="line"><span class="comment"># tf = 该单词在文章中出现次数 / 文章总词数</span></span><br><span class="line"><span class="comment"># idf = log[ (1 + 文章数) / (1 + 包含该单词的文章数) ] + 1</span></span><br><span class="line">total = len(corpus[<span class="number">-3</span>].split(<span class="string">' '</span>))</span><br><span class="line">tf_xinhua = countvector.toarray()[<span class="number">-3</span>, <span class="number">-3</span>] / total <span class="comment"># 第一个-3指倒数第3篇文章，第二个-3指"新华社"这个词</span></span><br><span class="line">tf_jizhe = countvector.toarray()[<span class="number">-3</span>, <span class="number">-1</span>] / total </span><br><span class="line">count_xinhua = <span class="number">0</span></span><br><span class="line">count_jizhe = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> countvector.toarray():</span><br><span class="line">    <span class="keyword">if</span> item[<span class="number">-3</span>]!=<span class="number">0</span>:</span><br><span class="line">        count_xinhua = count_xinhua + <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> item[<span class="number">-1</span>]!=<span class="number">0</span>:</span><br><span class="line">        count_jizhe = count_jizhe + <span class="number">1</span></span><br><span class="line">idf_xinhua = math.log( (<span class="number">1</span>+len(corpus)) / (<span class="number">1</span>+count_xinhua) ) + <span class="number">1</span> </span><br><span class="line">idf_jizhe = math.log( (<span class="number">1</span>+len(corpus)) / (<span class="number">1</span>+count_jizhe) ) + <span class="number">1</span></span><br><span class="line"><span class="comment"># 计算tfidf</span></span><br><span class="line">tfidf_xinhua = tf_xinhua * idf_xinhua</span><br><span class="line">tfidf_jizhe = tf_jizhe * idf_jizhe</span><br><span class="line">print(<span class="string">'L2归一之前'</span>, [tfidf_xinhua, tf_jizhe] )</span><br><span class="line"><span class="comment"># L2标准化</span></span><br><span class="line">norm = np.sqrt(tfidf_xinhua**<span class="number">2</span> + tfidf_jizhe**<span class="number">2</span>)</span><br><span class="line">print(<span class="string">'手算:'</span>, [tfidf_xinhua, tfidf_jizhe] / norm )</span><br><span class="line"></span><br><span class="line">tfidfvectorizer = TfidfVectorizer(min_df=<span class="number">0.3</span>)</span><br><span class="line">tfidf = tfidfvectorizer.fit_transform(corpus)</span><br><span class="line">print(<span class="string">'调库:'</span>, tfidf.toarray()[<span class="number">-3</span>, :])</span><br></pre></td></tr></table></figure>
+
       
     </div>
     
@@ -431,8 +457,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -462,7 +497,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -512,6 +547,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引子"><span class="nav-number">1.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实践"><span class="nav-number">2.</span> <span class="nav-text">实践</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展"><span class="nav-number">3.</span> <span class="nav-text"># 扩展</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -706,6 +757,26 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
 
