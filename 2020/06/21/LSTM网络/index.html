@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="[TOC] LSTM的网络结构  上面是一层LSTM网络的结构，我们把它称为一个Cell。上面的图只是展示了不同时刻这个Cell的状态，但本质上还是同一个Cell，同一个Cell在不同时刻共享权值。 我们可以把每个小黄框看成一个神经网络，输入会经过小黄框，转化为新的数据输出。num_units指定了每个小黄框的输出维度，如num_units&#x3D;50，则神经网络输出维度为50。 可以看到这个Cell里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LSTM网络">
+<meta property="og:url" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="无趣之人写的博客">
+<meta property="og:description" content="[TOC] LSTM的网络结构  上面是一层LSTM网络的结构，我们把它称为一个Cell。上面的图只是展示了不同时刻这个Cell的状态，但本质上还是同一个Cell，同一个Cell在不同时刻共享权值。 我们可以把每个小黄框看成一个神经网络，输入会经过小黄框，转化为新的数据输出。num_units指定了每个小黄框的输出维度，如num_units&#x3D;50，则神经网络输出维度为50。 可以看到这个Cell里">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/LSTM.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/%E9%81%97%E5%BF%98%E9%97%A8.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/%E8%BE%93%E5%85%A5%E9%97%A8.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/%E8%BE%93%E5%87%BA%E9%97%A8.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/%E6%97%B6%E9%97%B4%E6%AD%A5.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/PM2.5Model.png">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/loss.jpg">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/result3h.jpg">
+<meta property="article:published_time" content="2020-06-21T01:15:27.000Z">
+<meta property="article:modified_time" content="2020-06-22T14:19:01.526Z">
+<meta property="article:author" content="LiangL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://csliangl.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/LSTM.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://csLiangL.github.io/2020/06/21/LSTM网络/"/>
+
+
+
+
+
+  <title>LSTM网络 | 无趣之人写的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?88a4598912895abcac9e8444ea1aa231";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">无趣之人写的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://csLiangL.github.io/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LiangL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="无趣之人写的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LSTM网络</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-21T09:15:27+08:00">
+                2020-06-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="LSTM的网络结构"><a href="#LSTM的网络结构" class="headerlink" title="LSTM的网络结构"></a>LSTM的网络结构</h1><p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/LSTM.png" alt></p>
+<ul>
+<li>上面是一层LSTM网络的结构，我们把它称为一个Cell。上面的图只是展示了不同时刻这个Cell的状态，但本质上还是同一个Cell，同一个Cell在不同时刻共享权值。</li>
+<li>我们可以把每个<strong>小黄框看成一个神经网络</strong>，输入会经过小黄框，转化为新的数据输出。num_units指定了每个小黄框的输出维度，如num_units=50，则神经网络输出维度为50。</li>
+<li>可以看到这个Cell里面有两根线，上面这根线代表<strong>长时记忆</strong>，下面这根线代表<strong>短时记忆</strong>。</li>
+<li><strong>长时记忆</strong>先对元素点乘，即忘记了某些东西(也保留了某些东西)；后面又经过一个对元素的加法，即学到了某些东西，体现了基于当前输入对远距离记忆的忘记和保留。</li>
+<li><strong>短时记忆</strong>主要在第四个小黄框之后，对<strong>长时记忆</strong>的输出又进行了一次元素点乘，加强了当前时刻输入的影响。</li>
+</ul>
+<h2 id="遗忘门"><a href="#遗忘门" class="headerlink" title="遗忘门"></a>遗忘门</h2><p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/遗忘门.png" alt></p>
+<ul>
+<li>$x_t$代表t时刻的输入，$h_{t-1}$代表t-1时刻的<strong>短时</strong>输出(也叫隐藏状态)，两者会进行简单的连接，形成新的向量。如$x_t$是个8维的向量，而$h_{t-1}$是个50维的向量，则拼接后新的向量为58维的向量。</li>
+<li>新的向量会输入到<strong>小黄框代表的神经网络</strong>中，激活该网络的50个神经元(num_units=50时)，然后经由sigmoid函数作用后，映射到[0, 1]的范围内，作为$f_t$输出。(顺便计算一个这个小黄框需要训练的参数，每个神经元对58维向量的每个维度都有一个权重，因此每个神经元有58个权重，外加一个偏置，那么50个神经元则要训练50*59个参数)</li>
+<li>$f_t$这个向量中每个值都为0~1之间的数，与$C_{t-1}$(t-1时刻的<strong>长时</strong>输出)做元素的点乘，即控制了$C_{t-1}$每个维度数据的通过与否。0代表了完全不通过(遗忘)，1代表完全通过(保留)。</li>
+</ul>
+<h2 id="输入门"><a href="#输入门" class="headerlink" title="输入门"></a>输入门</h2><p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/输入门.png" alt></p>
+<ul>
+<li>输入门首先要理解的是：$i_t$和遗忘门的$f_t$虽然计算公式一样，但两者其实是独立的，是由不同的神经网络训练出来的结果。</li>
+<li>遗忘门中sigmoid函数的作用是选择性地获取<strong>长时记忆$C_{t-1}$</strong>中的信息，而这时的sigmoid函数的作用是选择性的获取隐藏状态$h_{t-1}$和输入$x_t$中的信息。</li>
+</ul>
+<h2 id="输出门"><a href="#输出门" class="headerlink" title="输出门"></a>输出门</h2><p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/输出门.png" alt></p>
+<ul>
+<li>同样地，这里的$o_t$和$i_t$、$f_t$也是独立的，这里的sigmoid函数的作用是选择性地获取当前时刻$C_t$中的信息。</li>
+</ul>
+<h2 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h2><p>可以看出，三个门中都有sigmoid函数，sigmoid函数就是把数据映射为[0, 1]的范围，来控制其他数据的通过程度，这就是”门”的作用。生成候选记忆的时候才会用到tanh，把数据映射到[-1, 1]的以0为均值的范围。</p>
+<h1 id="Keras"><a href="#Keras" class="headerlink" title="Keras"></a>Keras</h1><p>LSTM的输入数据维度是形如<strong>(batch, timesteps, feature)</strong>的3D张量。</p>
+<ul>
+<li>举个简单的例子：下图是北京5年的空气质量数据，我们的目的是通过空气质量数据(有8列)预测PM2.5值。当我们指定timesteps=3时，即表示我们会取三行数据作为一个样本，如红框所示，完成第一次取样，该样本的标签为181。然后红框向下移动一行，如绿框所示，完成第二次取样，该样本标签为138。通过不断地滑动窗口来不断取样，而timesteps指定了这个窗口的高，feature指定了这个窗口的宽，也代表着我们用过去三小时的8个特征来预测未来一小时的PM2.5的值。</li>
+<li>还不明白的可参考<a href="https://zhuanlan.zhihu.com/p/59862381" target="_blank" rel="noopener">Keras中的输入输出</a>，上面举的例子对应着Multiple Input那种情况。</li>
+</ul>
+<p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/时间步.png" alt></p>
+<h2 id="PM2-5预测例子"><a href="#PM2-5预测例子" class="headerlink" title="PM2.5预测例子"></a>PM2.5预测例子</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder</span><br><span class="line">pd.set_option(<span class="string">'display.width'</span>,<span class="number">1000</span>)</span><br><span class="line"><span class="comment"># 读入数据</span></span><br><span class="line">df_ds = pd.read_csv(<span class="string">"beijingPM2.5.csv"</span>)</span><br><span class="line"><span class="comment"># 删除"No"列</span></span><br><span class="line">df_ds.drop(<span class="string">'No'</span>, axis=<span class="number">1</span>, inplace=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 修改日期类型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parser</span><span class="params">(x)</span>:</span> <span class="comment"># 传入series，返回datetime</span></span><br><span class="line">    str_date = str(x[<span class="number">0</span>])+<span class="string">' '</span>+str(x[<span class="number">1</span>])+<span class="string">' '</span>+str(x[<span class="number">2</span>])+<span class="string">' '</span>+str(x[<span class="number">3</span>])</span><br><span class="line">    <span class="keyword">return</span> datetime.strptime(str_date, <span class="string">"%Y %m %d %H"</span>)</span><br><span class="line">df_ds[<span class="string">'datetime'</span>] = df_ds[[<span class="string">'year'</span>, <span class="string">'month'</span>, <span class="string">'day'</span>, <span class="string">'hour'</span>]].apply(<span class="keyword">lambda</span> x: parser(x), axis=<span class="number">1</span>)</span><br><span class="line"><span class="comment"># 删除年月日时列</span></span><br><span class="line">df_ds.drop([<span class="string">'year'</span>, <span class="string">'month'</span>, <span class="string">'day'</span>, <span class="string">'hour'</span>], axis=<span class="number">1</span>, inplace=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 以时间为索引</span></span><br><span class="line">df_ds.index = df_ds[<span class="string">'datetime'</span>]</span><br><span class="line">df_ds.drop(<span class="string">'datetime'</span>, axis=<span class="number">1</span>, inplace=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 给风向编码</span></span><br><span class="line">encoder = LabelEncoder()</span><br><span class="line">df_ds[<span class="string">'cbwd'</span>] = encoder.fit_transform(df_ds[<span class="string">'cbwd'</span>])</span><br><span class="line"><span class="comment"># 除去nan值</span></span><br><span class="line">print(<span class="string">"去除nan之前:"</span>, df_ds.shape) <span class="comment"># 去除nan之前: (43824, 8)</span></span><br><span class="line">df_ds.dropna(inplace=<span class="literal">True</span>)</span><br><span class="line">print(<span class="string">"去除nan之后:"</span>, df_ds.shape) <span class="comment"># 去除nan之后: (41757, 8)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, LSTM</span><br><span class="line">timesteps = <span class="number">3</span></span><br><span class="line"><span class="comment"># 搭建模型</span></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(LSTM(</span><br><span class="line">    output_dim=<span class="number">50</span>, <span class="comment"># 输出维度为50</span></span><br><span class="line">    input_shape=(timesteps, <span class="number">8</span>), <span class="comment"># 特征为8</span></span><br><span class="line">    activation=<span class="string">'relu'</span></span><br><span class="line">))</span><br><span class="line">model.add(Dense(<span class="number">1</span>))</span><br><span class="line">model.compile(loss=<span class="string">'mae'</span>, optimizer=<span class="string">'adam'</span>)</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/PM2.5Model.png" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 特征标签分别归一化</span></span><br><span class="line"><span class="comment"># 特征归一化</span></span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler</span><br><span class="line">ds_x = df_ds[df_ds.columns[:]].values</span><br><span class="line">scaler_X = MinMaxScaler(feature_range=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">ds_x_scaled = scaler_X.fit_transform(ds_x)</span><br><span class="line"><span class="comment"># 标签归一化</span></span><br><span class="line">ds_y = df_ds[df_ds.columns[<span class="number">0</span>]].values.reshape((<span class="number">-1</span>, <span class="number">1</span>))</span><br><span class="line">scaler_y = MinMaxScaler(feature_range=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">ds_y_scaled = scaler_y.fit_transform(ds_y)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 划分数据集</span></span><br><span class="line">n_train_hours = <span class="number">365</span>*<span class="number">24</span>*<span class="number">3</span></span><br><span class="line">train_X = ds_x_scaled[:n_train_hours, :]</span><br><span class="line">train_y = ds_y_scaled[:n_train_hours, :][timesteps:, :]</span><br><span class="line">test_X = ds_x_scaled[n_train_hours:, :]</span><br><span class="line">test_y = ds_y_scaled[n_train_hours:, :][timesteps:, :]</span><br><span class="line">print(<span class="string">'训练X:'</span>, train_X.shape, <span class="string">'训练y:'</span>, train_y.shape) <span class="comment"># 训练X: (26280, 8) 训练y: (26277, 1)</span></span><br><span class="line">print(<span class="string">'测试X:'</span>, test_X.shape, <span class="string">'测试y:'</span>, test_y.shape) <span class="comment"># 测试X: (15477, 8) 测试y: (15474, 1)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将特征转为LSTM的输入格式</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(ds)</span>:</span></span><br><span class="line">    samples = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(ds.shape[<span class="number">0</span>]-timesteps):</span><br><span class="line">        samples.append(ds[i:i+timesteps, :].tolist())</span><br><span class="line">    samples = np.array(samples)</span><br><span class="line">    <span class="keyword">return</span> samples</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">train_X = parse(train_X)</span><br><span class="line">history = model.fit(train_X, train_y, epochs=<span class="number">20</span>, batch_size=<span class="number">32</span>, validation_split=<span class="number">0.2</span>, verbose=<span class="number">2</span>, shuffle=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="comment"># 训练集loss变化</span></span><br><span class="line">plt.plot(history.history[<span class="string">'loss'</span>])</span><br><span class="line">plt.plot(history.history[<span class="string">'val_loss'</span>])</span><br><span class="line">plt.legend([<span class="string">'train'</span>, <span class="string">'validation'</span>])</span><br><span class="line">plt.savefig(<span class="string">'loss.jpg'</span>, dpi=<span class="number">800</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/loss.jpg" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 使用测试集预测</span></span><br><span class="line">test_X = parse(test_X)</span><br><span class="line">predict_y = model.predict(test_X)</span><br><span class="line"><span class="comment"># 反归一化</span></span><br><span class="line">actual_y = scaler_y.inverse_transform(test_y)</span><br><span class="line">predict_y = scaler_y.inverse_transform(predict_y)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算训练集RMSE</span></span><br><span class="line">rmse = np.sqrt(np.mean((actual_y[:<span class="number">-1</span>]-predict_y[<span class="number">1</span>:])**<span class="number">2</span>)) <span class="comment"># 预测值滞后一步</span></span><br><span class="line">print(<span class="string">"Test RMSE: &#123;:.3f&#125;"</span>.format(rmse)) <span class="comment"># Test RMSE: 10.295</span></span><br><span class="line"><span class="comment"># 画出预测曲线与实际曲线</span></span><br><span class="line">plt.plot(actual_y[:<span class="number">100</span>], <span class="string">'r'</span>)</span><br><span class="line">plt.plot(predict_y[<span class="number">1</span>:<span class="number">101</span>], <span class="string">'g--'</span>) </span><br><span class="line">plt.legend([<span class="string">'actual'</span>, <span class="string">'predict'</span>])</span><br><span class="line">plt.savefig(<span class="string">'result3h.jpg'</span>, dpi=<span class="number">800</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/06/21/LSTM%E7%BD%91%E7%BB%9C/result3h.jpg" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/12/ALS%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E9%9A%90%E8%AF%AD%E4%B9%89%E6%A8%A1%E5%9E%8B/" rel="next" title="ALS算法求解隐语义模型">
+                <i class="fa fa-chevron-left"></i> ALS算法求解隐语义模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="LiangL" />
+            
+              <p class="site-author-name" itemprop="name">LiangL</p>
+              <p class="site-description motion-element" itemprop="description">小时候真傻，居然盼着长大</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/csLiangL" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://mail.qq.com/" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LSTM的网络结构"><span class="nav-number">1.</span> <span class="nav-text">LSTM的网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#遗忘门"><span class="nav-number">1.1.</span> <span class="nav-text">遗忘门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输入门"><span class="nav-number">1.2.</span> <span class="nav-text">输入门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输出门"><span class="nav-number">1.3.</span> <span class="nav-text">输出门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#激活函数"><span class="nav-number">1.4.</span> <span class="nav-text">激活函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Keras"><span class="nav-number">2.</span> <span class="nav-text">Keras</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PM2-5预测例子"><span class="nav-number">2.1.</span> <span class="nav-text">PM2.5预测例子</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LiangL</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
