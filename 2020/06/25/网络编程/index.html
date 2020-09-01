@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="[TOC] Linux下服务器程序socket函数1int socket(int domain, int type, int protocol);  domain：ipv4&#x2F;ipv6 type：UDP&#x2F;TCP protocol：默认填写0 返回服务器套接字描述符  bind函数1int bind(int sockfd, const struct sockaddr *addr, socklen_t">
+<meta name="description" content="[TOC] 参考 Linux下BS模式架构 基本函数read()函数1ssize_t read(int fd, void *buf, size_t count)  fd &#x3D;&gt; buf  write()函数1write(fd, buf, size)  buf &#x3D;&gt; fd  fgets()函数1char *fgets(char *s, int size, FILE *stream) 获取键">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux下C的网络编程">
 <meta property="og:url" content="http://csliangl.github.io/2020/06/25/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="无趣之人写的博客">
-<meta property="og:description" content="[TOC] Linux下服务器程序socket函数1int socket(int domain, int type, int protocol);  domain：ipv4&#x2F;ipv6 type：UDP&#x2F;TCP protocol：默认填写0 返回服务器套接字描述符  bind函数1int bind(int sockfd, const struct sockaddr *addr, socklen_t">
+<meta property="og:description" content="[TOC] 参考 Linux下BS模式架构 基本函数read()函数1ssize_t read(int fd, void *buf, size_t count)  fd &#x3D;&gt; buf  write()函数1write(fd, buf, size)  buf &#x3D;&gt; fd  fgets()函数1char *fgets(char *s, int size, FILE *stream) 获取键">
+<meta property="og:image" content="http://csliangl.github.io/2020/06/25/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E6%B5%81%E7%A8%8B.jpg">
 <meta property="article:published_time" content="2020-06-25T08:40:40.000Z">
-<meta property="article:modified_time" content="2020-06-27T11:12:01.100Z">
+<meta property="article:modified_time" content="2020-07-11T11:00:19.543Z">
 <meta property="article:author" content="LiangL">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://csliangl.github.io/2020/06/25/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E6%B5%81%E7%A8%8B.jpg">
 
 
 
@@ -341,27 +343,60 @@
 
       
         <p>[TOC]</p>
-<h1 id="Linux下"><a href="#Linux下" class="headerlink" title="Linux下"></a>Linux下</h1><h2 id="服务器程序"><a href="#服务器程序" class="headerlink" title="服务器程序"></a>服务器程序</h2><h3 id="socket函数"><a href="#socket函数" class="headerlink" title="socket函数"></a>socket函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><a href="https://blog.csdn.net/tigerjb/article/details/6775534" target="_blank" rel="noopener">参考</a></p>
+<h1 id="Linux下"><a href="#Linux下" class="headerlink" title="Linux下"></a>Linux下</h1><h2 id="BS模式架构"><a href="#BS模式架构" class="headerlink" title="BS模式架构"></a>BS模式架构</h2><p><img src="/2020/06/25/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/流程.jpg" alt></p>
+<h2 id="基本函数"><a href="#基本函数" class="headerlink" title="基本函数"></a>基本函数</h2><h3 id="read-函数"><a href="#read-函数" class="headerlink" title="read()函数"></a>read()函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>fd =&gt; buf</li>
+</ul>
+<h3 id="write-函数"><a href="#write-函数" class="headerlink" title="write()函数"></a>write()函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">write</span>(fd, buf, <span class="built_in">size</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>buf =&gt; fd</li>
+</ul>
+<h3 id="fgets-函数"><a href="#fgets-函数" class="headerlink" title="fgets()函数"></a>fgets()函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">fgets</span><span class="params">(<span class="keyword">char</span> *s, <span class="keyword">int</span> <span class="built_in">size</span>, FILE *stream)</span></span></span><br></pre></td></tr></table></figure>
+<p>获取键盘输入</p>
+<ul>
+<li><em>stream =&gt; </em>s</li>
+</ul>
+<h2 id="网络函数"><a href="#网络函数" class="headerlink" title="网络函数"></a>网络函数</h2><h3 id="socket函数"><a href="#socket函数" class="headerlink" title="socket函数"></a>socket函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>domain：ipv4/ipv6</li>
 <li>type：UDP/TCP</li>
 <li>protocol：默认填写0</li>
 <li>返回服务器套接字描述符</li>
 </ul>
-<h3 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct sockaddr *addr, <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="服务器函数"><a href="#服务器函数" class="headerlink" title="服务器函数"></a>服务器函数</h2><h3 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct sockaddr *addr, <span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>sockfd：服务器套接字文件描述符</li>
 <li>*addr：服务器ip和端口信息</li>
 <li>addrlen：服务器地址长度</li>
 <li>返回0成功，返回-1失败。</li>
 </ul>
-<h3 id="accept函数"><a href="#accept函数" class="headerlink" title="accept函数"></a>accept函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *addr, <span class="keyword">socklen_t</span> *addrlen, <span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="listen函数"><a href="#listen函数" class="headerlink" title="listen函数"></a>listen函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">listen</span>(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> backlog) <span class="comment">// 激活套接字</span></span><br></pre></td></tr></table></figure>
 <ul>
-<li>clie_addr是<strong>传出</strong>参数，返回客户端地址信息。</li>
-<li>clie_addr_len是<strong>传入传出</strong>参数，传入sizeof(addr)大小，返回真正接受到地址结构体大小。</li>
+<li>backlog：连接请求的队列的最大长度，同时建立连接的最大值。</li>
 </ul>
-<h1 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h1><h2 id="网络字节序"><a href="#网络字节序" class="headerlink" title="网络字节序"></a>网络字节序</h2><p>TCP/IP协议规定，<strong>网络数据流应采用大端字节序</strong>。如果发送主机是<strong>小端字节序</strong>，在把ip和端口号发送到缓冲区之前需要做字节序的转换。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">serv_addr.sin_port = htons(SERV_PORT); </span><br><span class="line">serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line"><span class="comment">//点分十进制ip =&gt; 网络流ip</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_pton</span><span class="params">(<span class="keyword">int</span> af, <span class="keyword">const</span> <span class="keyword">char</span> *src, <span class="keyword">void</span> *dst)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="accept函数"><a href="#accept函数" class="headerlink" title="accept函数"></a>accept函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *addr, <span class="keyword">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>sockfd：<strong>服务器</strong>套接字</li>
+<li>addr：<strong>客户端</strong>地址信息。</li>
+<li>addr_len：传入sizeof(addr)大小，返回真正接受到的<strong>客户端</strong>地址结构体大小。</li>
+<li>返回客户端文件描述符</li>
+</ul>
+<h2 id="客户端函数"><a href="#客户端函数" class="headerlink" title="客户端函数"></a>客户端函数</h2><h3 id="connect函数"><a href="#connect函数" class="headerlink" title="connect函数"></a>connect函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct sockaddr *addr, <span class="keyword">socklen_t</span> addrlen)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>sockfd：<strong>客户端</strong>套接字</li>
+<li>addr：<strong>服务器</strong>地址信息</li>
+<li>addr_len：<strong>服务器</strong>地址结构体大小</li>
+</ul>
+<h2 id="一些细节"><a href="#一些细节" class="headerlink" title="一些细节"></a>一些细节</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span>&#123;</span></span><br><span class="line">	<span class="keyword">sa_family_t</span>     sin_family; <span class="comment">// 16位地址类型</span></span><br><span class="line">    <span class="keyword">in_port_t</span>       sin_port; <span class="comment">//16位端口号</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span>  <span class="title">sin_addr</span>;</span> </span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span>&#123;</span></span><br><span class="line">  <span class="keyword">uint32_t</span> s_addr; <span class="comment">//32位ip地址 </span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="网络字节序"><a href="#网络字节序" class="headerlink" title="网络字节序"></a>网络字节序</h3><p>TCP/IP协议规定，<strong>网络数据流应采用大端字节序</strong>。如果发送主机是<strong>小端字节序</strong>，在把ip和端口号发送到缓冲区之前需要做字节序的转换。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="keyword">uint32_t</span> hostlong)</span></span>;  <span class="comment">//host to net long  服务器绑定IP</span></span><br><span class="line"><span class="function"><span class="keyword">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="keyword">uint16_t</span> hostshort)</span></span>; <span class="comment">//host to net short 服务器绑定Port</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_pton</span><span class="params">(<span class="keyword">int</span> af, <span class="keyword">const</span> <span class="keyword">char</span> *src, <span class="keyword">void</span> *dst)</span></span>; <span class="comment">//IP字符串=&gt;网络字节序  客户端绑定服务器IP</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_ntop</span><span class="params">(<span class="keyword">int</span> af, <span class="keyword">const</span> <span class="keyword">void</span> *src, <span class="keyword">char</span> *dst, <span class="keyword">socklen_t</span> <span class="built_in">size</span>)</span></span>; <span class="comment">//网络字节序=&gt;IP字符串</span></span><br></pre></td></tr></table></figure>
+<h3 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h3><ul>
+<li>INADDR_ANY：不管数据是从哪个ip过来的，只是要绑定的端口号过来的数据，都可以接收到。这样方便用一个套接字来管理所有的ip。</li>
+<li>服务器accept时并不了解客户端地址的大小，因此<strong>传地址</strong>；而客户端connect时了解服务器端地址的大小，因此直接<strong>传值</strong>。</li>
+<li>两端都是通过<strong>cfd</strong>来交流：服务器端accept得到cfd，客户端直接socket得到cfd。</li>
+</ul>
 
       
     </div>
@@ -479,7 +514,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -490,7 +525,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -501,7 +536,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -550,7 +585,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux下"><span class="nav-number">1.</span> <span class="nav-text">Linux下</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#服务器程序"><span class="nav-number">1.1.</span> <span class="nav-text">服务器程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket函数"><span class="nav-number">1.1.1.</span> <span class="nav-text">socket函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bind函数"><span class="nav-number">1.1.2.</span> <span class="nav-text">bind函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">accept函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tips"><span class="nav-number">2.</span> <span class="nav-text">tips</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络字节序"><span class="nav-number">2.1.</span> <span class="nav-text">网络字节序</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux下"><span class="nav-number">1.</span> <span class="nav-text">Linux下</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BS模式架构"><span class="nav-number">1.1.</span> <span class="nav-text">BS模式架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本函数"><span class="nav-number">1.2.</span> <span class="nav-text">基本函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#read-函数"><span class="nav-number">1.2.1.</span> <span class="nav-text">read()函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write-函数"><span class="nav-number">1.2.2.</span> <span class="nav-text">write()函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fgets-函数"><span class="nav-number">1.2.3.</span> <span class="nav-text">fgets()函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络函数"><span class="nav-number">1.3.</span> <span class="nav-text">网络函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">socket函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务器函数"><span class="nav-number">1.4.</span> <span class="nav-text">服务器函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bind函数"><span class="nav-number">1.4.1.</span> <span class="nav-text">bind函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#listen函数"><span class="nav-number">1.4.2.</span> <span class="nav-text">listen函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept函数"><span class="nav-number">1.4.3.</span> <span class="nav-text">accept函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端函数"><span class="nav-number">1.5.</span> <span class="nav-text">客户端函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#connect函数"><span class="nav-number">1.5.1.</span> <span class="nav-text">connect函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些细节"><span class="nav-number">1.6.</span> <span class="nav-text">一些细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构"><span class="nav-number">1.6.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络字节序"><span class="nav-number">1.6.2.</span> <span class="nav-text">网络字节序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tips"><span class="nav-number">1.6.3.</span> <span class="nav-text">tips</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
